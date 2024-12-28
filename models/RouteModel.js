@@ -6,7 +6,7 @@ const routeSchema = new mongoose.Schema({
   startingPoint: { type: String, required: true },
   endingPoint: { type: String, required: true },
   distance: { type: String, required: true },
-  schedule: { type: String, required: true },
+  // schedule: { type: String, required: true },
   isActive: {
     type: Boolean,
     default: true, // Default to true if not specified

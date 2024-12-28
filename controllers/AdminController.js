@@ -4,15 +4,16 @@ const Bus = require('../models/BusModel');
 
 // Add a new route
 exports.addRoute = async (req, res) => {
-  const { routeNumber, startingPoint, endingPoint, distance, schedule } = req.body;
+  const { routeNumber, startingPoint, endingPoint, distance } = req.body;
 
-  try {
+  try {    
+
+    //create new route
     const newRoute = await Route.create({
         routeNumber, 
         startingPoint, 
         endingPoint, 
         distance, 
-        schedule
       });
     res.status(201).json({ message: 'Route added successfully', route: newRoute });
   } catch (error) {controllers/AdminController.js
@@ -22,7 +23,7 @@ exports.addRoute = async (req, res) => {
 
 // Add a new bus
 exports.addBus = async (req, res) => {
-  const { busNumber, driverName, capacity, registrationNumber, routeNumber } = req.body;
+  const { busNumber, driverName, conductorName, operatorname, bustype, capacity, price, availableSeats, registrationNumber, routeNumber } = req.body;
 
   try {
     // Check if a bus with the same registrationNumber already exists
@@ -47,7 +48,12 @@ exports.addBus = async (req, res) => {
     const newBus = await Bus.create({
       busNumber,
       driverName,
+      conductorName,
+      operatorname,
+      bustype,
       capacity,
+      price,
+      availableSeats,
       registrationNumber,
       routeNumber: route.routeNumber,
     });

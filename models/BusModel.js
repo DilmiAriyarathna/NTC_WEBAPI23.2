@@ -7,37 +7,53 @@ const getLastTwoDigits = (number) => {
 };
 
 const busSchema = new mongoose.Schema({
-    busId: {
-        type: String,
-        unique: true
-      },
-      busNumber: {
-        type: String,
-        required: true,
-        unique: true
-      },
-      driverName: {
-        type: String,
-        required: true
-      },
-      capacity: {
-        type: Number,
-        required: true
-      },
-      registrationNumber: {
-        type: String,
-        required: true,
-        unique: true
-      },
-      routeNumber: {
-        type: String, // Human-readable route number
-        required: true,
-      },
-      isAvailable: {
-        type: Boolean,
-        default: true // Defaults to true (bus is available)
-      }
-    }, { timestamps: true });
+  busNumber: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  driverName: {
+    type: String,
+    required: true
+  },
+  conductorName: {
+    type: String,
+    required: true
+  },
+  operatorname: {
+    type: String,
+    required: true
+  },
+  bustype: {
+    type: String,
+    required: true
+  },
+  capacity: {
+    type: Number,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  availableSeats: {
+    type: Number,
+    required: true
+  },
+  registrationNumber: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  routeNumber: {
+    type: String, // Human-readable route number
+    required: true,
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true // Defaults to true (bus is available)
+  }
+}, { timestamps: true });
 
 //Pre-SAVE : To generate busId automatically
 busSchema.pre('save', function(next){

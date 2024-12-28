@@ -26,7 +26,6 @@ const router = express.Router();
  *               - startingPoint
  *               - endingPoint
  *               - distance
- *               - schedule
  *             properties:
  *               routeNumber:
  *                 type: string
@@ -40,9 +39,6 @@ const router = express.Router();
  *               distance:
  *                 type: string
  *                 description: The distance of the route.
- *               schedule:
- *                 type: string
- *                 description: The schedule for the route.
  *     responses:
  *       201:
  *         description: Route added successfully
@@ -59,14 +55,16 @@ const router = express.Router();
  *                   properties:
  *                     routeNumber:
  *                       type: string
+ *                       example: "R123"
  *                     startingPoint:
  *                       type: string
+ *                       example: "City A"
  *                     endingPoint:
  *                       type: string
+ *                       example: "City B"
  *                     distance:
  *                       type: string
- *                     schedule:
- *                       type: string
+ *                       example: "200km"
  *                     isActive:
  *                       type: boolean
  *                       example: true
@@ -109,25 +107,56 @@ router.post('/routes', authMiddleware, adminMiddleware, addRoute);
  *             required:
  *               - busNumber
  *               - driverName
+ *               - conductorName
+ *               - operatorname
+ *               - bustype
  *               - capacity
+ *               - price
+ *               - availableSeats
  *               - registrationNumber
- *               - routeId
+ *               - routeNumber
  *             properties:
  *               busNumber:
  *                 type: string
- *                 description: The unique number of the bus
+ *                 description: Unique bus number
+ *                 example: "BUS123"
  *               driverName:
  *                 type: string
- *                 description: The name of the bus driver
+ *                 description: Name of the bus driver
+ *                 example: "John Doe"
+ *               conductorName:
+ *                 type: string
+ *                 description: Name of the conductor
+ *                 example: "Jane Doe"
+ *               operatorname:
+ *                 type: string
+ *                 description: Name of the operator
+ *                 example: "ABC Travels"
+ *               bustype:
+ *                 type: string
+ *                 enum: [Luxury, Semi Luxury, Ordinary]
+ *                 description: Type of the bus
+ *                 example: "Semi Luxury"
  *               capacity:
  *                 type: integer
- *                 description: The seating capacity of the bus
+ *                 description: Seating capacity of the bus
+ *                 example: 45
+ *               price:
+ *                 type: number
+ *                 description: Ticket price for this bus
+ *                 example: 1500.00
+ *               availableSeats:
+ *                 type: integer
+ *                 description: Number of available seats
+ *                 example: 30
  *               registrationNumber:
  *                 type: string
- *                 description: The unique registration number of the bus
- *               routeId:
+ *                 description: Unique registration number of the bus
+ *                 example: "XYZ1234"
+ *               routeNumber:
  *                 type: string
- *                 description: The ID of the route assigned to the bus
+ *                 description: The human-readable route number assigned to the bus
+ *                 example: "1587"
  *     responses:
  *       201:
  *         description: Bus added successfully
@@ -144,26 +173,62 @@ router.post('/routes', authMiddleware, adminMiddleware, addRoute);
  *                   properties:
  *                     busId:
  *                       type: string
+ *                       description: Auto-generated Bus ID
  *                       example: "2304"
  *                     busNumber:
  *                       type: string
- *                       example: "12345"
+ *                       description: Unique bus number
+ *                       example: "BUS123"
  *                     driverName:
  *                       type: string
  *                       example: "John Doe"
+ *                     conductorName:
+ *                       type: string
+ *                       example: "Jane Doe"
+ *                     operatorname:
+ *                       type: string
+ *                       example: "ABC Travels"
+ *                     bustype:
+ *                       type: string
+ *                       example: "Semi Luxury"
  *                     capacity:
  *                       type: integer
- *                       example: 40
+ *                       example: 45
+ *                     price:
+ *                       type: number
+ *                       example: 1500.00
+ *                     availableSeats:
+ *                       type: integer
+ *                       example: 30
  *                     registrationNumber:
  *                       type: string
  *                       example: "XYZ1234"
- *                     routeId:
+ *                     routeNumber:
  *                       type: string
- *                       example: "64c8b32f4b7c6d2e6c4b3e12"
+ *                       example: "1587"
  *       400:
  *         description: Invalid request or duplicate registration number
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: A bus with this registration number already exists
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add bus
+ *                 error:
+ *                   type: string
+ *                   example: Detailed error message
  */
 router.post('/buses', authMiddleware, adminMiddleware, addBus);
 
