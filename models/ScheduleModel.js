@@ -1,5 +1,7 @@
 // models/SheduleModel.js
 const mongoose = require('mongoose');
+const Route = require('./RouteModel'); // Import the Route model
+const Bus = require('./BusModel'); // Import the Bus model
 
 const sheduleSchema = new mongoose.Schema({
     route: {
@@ -13,7 +15,7 @@ const sheduleSchema = new mongoose.Schema({
         },
     },
     bus: {
-        busNumber: { 
+        registrationNumber: { 
             type: String,
             required: true
         },
@@ -61,6 +63,10 @@ const sheduleSchema = new mongoose.Schema({
         type: Boolean,
         default: true, // Defaults to true if not specified
       },
+      scheduleToken: {
+        type: String,
+        unique: true,
+      },
 },
       {
         timestamps: true, // Adds createdAt and updatedAt fields
@@ -68,9 +74,6 @@ const sheduleSchema = new mongoose.Schema({
 
 // Middleware to validate route and bus before saving
 sheduleSchema.pre('save', async function (next) {
-    const Route = mongoose.model('RouteModel');
-    const Bus = mongoose.model('BusModel');
-
     //validate Route availability and activation
     const routeExists = await Route.findOne({
         routeNumber: this.route.routeNumber,
@@ -80,16 +83,24 @@ sheduleSchema.pre('save', async function (next) {
         return next(new Error('Selected route is not available or inactive. Please check!!'));
     }
 
-    //validate Bus availability and activation
-    const busExists = await Bus.findOne({
-        busNumber: this.bus.busNumber,
-        isActive: true,
-        operatorName: this.bus.operatorName, //Ensure bus belongs to the operator
-    });
-    if(!busExists){
-        return next(new Error('Selected bus is not available or inactive. Please check!!'));
-    }
-
+    if (!this.scheduleToken) {
+        // Extract route number and route name
+        const routeNumber = this.route.routeNumber;
+        const routeName = this.route.routeName.replace(/\s+/g, ''); // Remove spaces
+    
+        // Extract bus registration number
+        const registrationNumber = this.bus.registrationNumber;
+    
+        // Extract schedule date (YYYYMMDD format)
+        const scheduleDate = new Date(this.schedule[0].departureTime)
+          .toISOString()
+          .slice(0, 10)
+          .replace(/-/g, ''); // Format as YYYYMMDD
+    
+        // Generate the schedule token
+        this.scheduleToken = `${routeNumber}${registrationNumber}${scheduleDate}-${routeName}`;
+      }
+      
     next();
 });
 

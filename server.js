@@ -6,6 +6,7 @@ const _swaggerConfig  = require('./swaggerConfig')
 
 const userRoutes = require('./routes/UserRoutes');
 const adminRoutes = require('./routes/AdminRoutes');
+const operatorRoutes = require('./routes/OperatorRoutes');
 
 _dotenv.config()
 
@@ -22,6 +23,9 @@ _app.use('/api/users', userRoutes);
 
 //Admin
 _app.use('/api/admin', adminRoutes);
+
+//Operator
+_app.use('/api/operator', operatorRoutes);
 
 // Error Middleware
 _app.use(require('./middleware/errorMiddleware'));
