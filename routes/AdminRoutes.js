@@ -12,9 +12,9 @@ const router = express.Router();
  * /api/admin/routes:
  *   post:
  *     summary: Add a new route
- *     tags: [Admin]
+ *     tags: [NTC_Admin]
  *     security:
- *       - Bearer: []
+ *       - bearerAuth: []  # Define that Bearer token is required
  *     requestBody:
  *       required: true
  *       content:
@@ -74,6 +74,36 @@ const router = express.Router();
  *                     updatedAt:
  *                       type: string
  *                       format: date-time
+ *       400:
+ *         description: Bad Request - Invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data."
+ *       401:
+ *         description: Unauthorized - Token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. No token provided or invalid token."
+ *       403:
+ *         description: Forbidden - User is not an Admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. Admins only."
  *       500:
  *         description: Failed to add route
  *         content:
@@ -83,9 +113,10 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Failed to add route
+ *                   example: "Failed to add route."
  *                 error:
  *                   type: string
+ *                   example: "Database error or other internal issue."
  */
 router.post('/routes', authMiddleware, adminMiddleware, addRoute);
 
@@ -95,9 +126,9 @@ router.post('/routes', authMiddleware, adminMiddleware, addRoute);
  * /api/admin/buses:
  *   post:
  *     summary: Add a new bus
- *     tags: [Admin]
+ *     tags: [NTC_Admin]
  *     security:
- *       - Bearer: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -240,9 +271,9 @@ router.post('/buses', authMiddleware, adminMiddleware, addBus);
  * /api/admin/routes:
  *   get:
  *     summary: Retrieve all routes
- *     tags: [Admin]
+ *     tags: [NTC_Admin]
  *     security:
- *       - Bearer: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all routes
@@ -288,9 +319,9 @@ router.get('/routes', authMiddleware, adminMiddleware, getRoutes);
  * /api/admin/buses:
  *   get:
  *     summary: Retrieve all buses
- *     tags: [Admin]
+ *     tags: [NTC_Admin]
  *     security:
- *       - Bearer: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all buses with route details

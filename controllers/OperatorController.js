@@ -1,6 +1,6 @@
 const Schedule = require('../models/ScheduleModel');
 const Bus = require('../models/BusModel');
-
+const SeatStatus = require('../models/SeatStatusModel');
 
 // Add a new schedule
 exports.addSchedule = async (req, res) => {
@@ -157,5 +157,86 @@ exports.getSchedulesByOperator = async (req, res) => {
       message: 'Failed to retrieve schedules',
       error: error.message,
     });
+  }
+};
+
+
+// Update seat statuses
+exports.updateSeats = async (req, res) => {
+  // const scheduleId = req.params.scheduleId; // Extract scheduleId from the URL parameter
+  const { scheduleId } = req.params;
+  const { seatUpdates, operatorName } = req.body;
+
+  try {
+    //console.log('Schedule ID:', scheduleId);
+
+    // Find the schedule by scheduleToken
+    const schedule = await Schedule.findOne({ scheduleToken: scheduleId });
+
+    //console.log('Database query result:', schedule); // Debug database query result
+
+    if (!schedule) {
+      return res.status(404).json({ message: 'Schedule not found' });
+    }
+
+    // Ensure only the scheduled operator can update the seat statuses
+    if (schedule.bus.operatorName !== operatorName) {
+      return res.status(403).json({ message: 'You do not have permission to update this schedule.' });
+    }
+
+    // Find the existing seat status record
+    let seatStatus = await SeatStatus.findOne({ scheduleId });
+
+
+    if (!seatStatus) {
+    // First-time insert
+    seatStatus = new SeatStatus({
+      scheduleId,
+      seatUpdates,
+      operatorName,
+    });
+  } else {
+    // Update existing record: Merge seat updates
+    seatUpdates.forEach((update) => {
+      const existingSeat = seatStatus.seatUpdates.find(s => s.seatNumber === update.seatNumber);
+      if (existingSeat) {
+        // Update the existing seat status
+        existingSeat.status = update.status;
+      } else {
+        // Add new seat update
+        seatStatus.seatUpdates.push(update);
+      }
+    });
+  }
+    await seatStatus.save();
+
+    res.json({ message: 'Seat statuses updated successfully', seatStatus  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get seat availability (merged with operator updates)
+exports.getSeatAvailability = async (req, res) => {
+  const { scheduleId } = req.params;
+  try {
+    const schedule = await Schedule.findOne({ scheduleToken: scheduleId });
+    if (!schedule) {
+      return res.status(404).json({ message: 'Schedule not found' });
+    }
+
+    const seatStatus = await SeatStatus.findOne({ scheduleId });
+
+    const updatedSeats = seatStatus.seatUpdates.map((seat) => {
+      const operatorSeat = seatStatus?.seatUpdates.find((s) => s.seatNumber === seat.seatNumber);
+      return {
+        seatNumber: seat.seatNumber,
+        status: operatorSeat?.status || seat.status,
+      };
+    });
+
+    res.json(updatedSeats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
