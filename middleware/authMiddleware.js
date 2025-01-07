@@ -38,6 +38,7 @@ module.exports = async (req, res, next) => {
   req.user = {
     id: user._id,
     name: user.name, // Assuming the user's name column is `name`
+    email: user.email,
     role: user.role, // Assuming the user's role column is `role`
   };
     // req.user = decoded; // Attach decoded token data to request object
