@@ -7,6 +7,7 @@ const _swaggerConfig  = require('./swaggerConfig')
 const userRoutes = require('./routes/UserRoutes');
 const adminRoutes = require('./routes/AdminRoutes');
 const operatorRoutes = require('./routes/OperatorRoutes');
+const commuterRoutes = require('./routes/CommuterRoutes');
 
 _dotenv.config()
 
@@ -27,6 +28,9 @@ _app.use('/api/admin', adminRoutes);
 //Operator
 _app.use('/api/operator', operatorRoutes);
 
+//Commuter
+_app.use('/api/commuter', commuterRoutes);
+
 // Error Middleware
 _app.use(require('./middleware/errorMiddleware'));
 
@@ -39,7 +43,7 @@ _mongoose
 .then(() => {
     console.log('Connected to DB')
 })
-.catch((err) => {console.log(error)
+.catch((err) => {console.log(err)
 })
 
 //start server
